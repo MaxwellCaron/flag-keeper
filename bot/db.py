@@ -90,6 +90,36 @@ class FlagsDatabase:
         conn.commit()
         conn.close()
 
+    def get_submitted_flags(self) -> dict | None:
+        conn = sqlite3.connect(self.db_path)
+        cursor = conn.cursor()
+        cursor.execute("""
+        SELECT flags.team, COUNT(DISTINCT found.flag) as flags
+        FROM flags
+        LEFT JOIN found ON flags.team = found.team
+        GROUP BY flags.team
+        ORDER BY flags.team;
+        """)
+        teams = cursor.fetchall()
+        conn.close()
+
+        return teams if teams else None
+
+    def get_found_flags(self) -> dict | None:
+        conn = sqlite3.connect(self.db_path)
+        cursor = conn.cursor()
+        cursor.execute("""
+        SELECT flags.team, COUNT(*) as flags
+        FROM found
+        JOIN flags ON found.flag = flags.flag
+        WHERE found.team != flags.team
+        GROUP BY flags.team;
+        """)
+        teams = cursor.fetchall()
+        conn.close()
+
+        return teams if teams else None
+
 
 if __name__ == '__main__':
     pass

@@ -38,14 +38,14 @@ def get_team_channel(channel_id: int) -> GuildText | None:
             description="Flag",
             required=True,
             type=OptionType.STRING,
-            min_length=32,
-            max_length=32
+            min_length=64,
+            max_length=64
         )
     ]
 )
 async def submit_flag_function(ctx: SlashContext, flag: str):
     channel_name = ctx.channel.name.lower()
-    if not channel_name.startswith('team'):
+    if not channel_name.endswith('chat'):
         await ctx.send('Invalid channel.', ephemeral=True)
         return
 
